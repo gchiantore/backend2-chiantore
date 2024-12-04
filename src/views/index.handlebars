@@ -1,0 +1,34 @@
+<style>
+    .options-container {
+        display: flex;
+        flex-direction:row;
+        justify-content:space-evenly;
+        column-gap: 20px;
+        width: 100%;
+        margin-bottom: 40px;
+        margin-top: 40px;
+        padding: 30px;
+        border: 1px solid #666;
+        border-radius: 0.5em;
+        color: #fff;
+    }
+</style>
+
+<div>
+    <h1>Proyecto Final Backend</h1>
+    <h6>CodeHouse / Backend 1 / Comision 70275 / Chiantore</h6>
+    <hr>
+    <h6>Current Cart: <i class="bi bi-cart-check-fill"></i> {{cart}} </h6>
+    <hr>
+    <h5 class="text-center">Opciones de vistas</h5>
+    <hr>
+    <div class="options-container">
+        <div>
+            <a href="/products/newproduct" class="btn btn-success btn-lg">Crear un Producto</a>
+            <a href="/users/newuser" class="btn btn-warning btn-lg">Crear un Usuario</a>
+            <a href="/carts/setcart" class="btn btn-danger btn-lg">Setear un Carrito</a>
+            <a href="/products/productslist" class="btn btn-info btn-lg">Ver lista de Productos</a>
+            <a href="/carts/cart/{{cart}}" class="btn btn-primary btn-lg">Ver contenido de Carrito</a>
+        </div>
+    </div>
+</div>

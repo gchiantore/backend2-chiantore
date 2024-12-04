@@ -1,0 +1,41 @@
+.background-body{
+    margin: 0;
+    padding: 0;
+    background-color: #b6b1b1;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+.logo{
+    width: 60px;
+    height: 60px;
+}
+.avatar{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: aliceblue;
+}
+
+.centrada{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .newproduct-container {
+        margin-top: 64px !important;
+        max-width: 360px;
+        margin: auto;
+        padding: 32px;
+        border-radius: 0.5em;
+        color: #000;
+        border: 1px solid #666;
+    }
+
+    .a2 {
+        color: #e1e1e1;
+    }
+
+    .a2:hover {
+        color: #fff;
+    }
