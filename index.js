@@ -1,4 +1,4 @@
-import "dotenv/config.js"
+import envUtil from "./src/utils/env.util.js"
 import express from "express"
 import morgan from "morgan"
 import handlebars from 'express-handlebars';
@@ -10,13 +10,17 @@ import cookieParser from "cookie-parser"
 import session from "express-session"
 import MongoStore from "connect-mongo";
 import cors from "cors"
+import argsUtil from "./src/utils/args.util.js";
 
 // server
 const server = express()
-const port = process.env.PORT
+const port = envUtil.PORT
 const ready = ()=> {
     console.log("server ready on port "+port);
-    dbConnect()
+    console.log("Server on mode "+argsUtil.env);
+    if (argsUtil.persistence === "mongo"){
+        dbConnect()
+    }
 }
 server.listen(port, ready)
 
@@ -43,19 +47,13 @@ server.use(express.static("public"))
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(morgan("dev"));
-server.use(cookieParser(process.env.SECRET_KEY));
-// configuración de session con memory
-// server.use(session({ secret: process.env.SECRET_KEY, resave: true, saveUninitialized: true, cookie: { maxAge: 60000 } }))
-// configuración de session con file storage
-// const FileStore = sessionFileStore(session)
-// server.use(session({ secret: process.env.SECRET_KEY, resave: true, saveUninitialized: true, store: new FileStore({ path: "./src/data/fs/sessions", ttl: 10, retries: 2 })}))
-// configuración de session con mongo storage
+server.use(cookieParser(envUtil.SECRET_KEY));
 server.use(session({
-    secret: process.env.SECRET_KEY,
+    secret: envUtil.SECRET_KEY,
     resave: true,
     saveUninitialized: true,
     store: new MongoStore({
-        mongoUrl: process.env.DATABASE_URI,
+        mongoUrl: envUtil.DATABASE_URI,
         ttl: 60*60*24 // 1 day (60 segundos por 60 minutos por 24 horas) eso va a durar la session 
     }),
 }))
@@ -65,7 +63,11 @@ server.use(indexRouter)
 server.use(errorHandler)
 server.use(pathHandler)
 
+console.log(argsUtil.persistence);
+//console.log(process.argv);
 
+//console.log(process.argv[3]);
+//console.log(process.argv[4]);
 /*
 FORMA DE LEVANTAR EL SERVIDOR POR EL PROFE CARLOS PERREN
 

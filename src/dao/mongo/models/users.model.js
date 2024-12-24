@@ -16,7 +16,9 @@ const schema = new mongoose.Schema({
     role: { type: String, default: 'USER', enum: ['USER','ADMIN','PREM'] },
     verifyUser: { type: Boolean, default: false },
     verifyCode: { type: String, default: "1234" },
-    isOnline: { type: Boolean, default: false }
+    isOnline: { type: Boolean, default: false },
+    forgotPass:{ type:Boolean, defautl: false},
+    forgotCode:{ type:String, default:""}
 });
 schema.plugin(mongoosePaginate);
 

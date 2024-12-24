@@ -9,6 +9,7 @@ btnLogin.addEventListener("click", async (event)=>{
             email: document.querySelector("#email").value,
             password: document.querySelector("#password").value
         }
+        console.log(data)
         const options = {
             method: "POST",
             headers: { "Content-Type": "application/json" },

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import jwt from "jsonwebtoken"
-import { readById } from "../data/mongo/managers/users.manager.js";
+import { readById } from "../dao/mongo/managers/users.manager.js";
+import envUtil from "./env.util.js";
 
 class CustomRouter {
     constructor() {
@@ -30,7 +31,7 @@ class CustomRouter {
             if (pol.includes("PUBLIC")) return next();
             const token = req?.cookies?.token;
             if (!token) return res.json401();
-            const data = jwt.verify(token, process.env.JWT_SECRET);
+            const data = jwt.verify(token, envUtil.JWT_SECRET);
             const { role, user_id } = data;
             if (!role || !user_id) return res.json401();
             if (
@@ -39,6 +40,7 @@ class CustomRouter {
             ) {
                 const user = await readById(user_id);
                 if (!user) return res.json401();
+                if (!user.verifyUser) return res.status(401).json({ message: "USER NOT VERIFIED, VERIFY YOUR ACCOUNT" });
                 req.user = user;
                 return next();
             }

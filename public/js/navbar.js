@@ -9,16 +9,60 @@ async function verifyOnLine() {
         response = await response.json()
         const {online} = response
         if (online) {
-            // pregunto si es admin
-            // si es admin
-                // renderizo el navbar de admin
-            // si no es admin
-                // renderizo el navbar de user
+            if (online.role == "ADMIN") {   
+                menu.innerHTML = `
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="addproducts.html">Agregar Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="products.html">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" id="logOutLink">Log Out</a>
+                        </li>
+                `
+                index.innerText=`${token.user_id}`
+            }else{
+                menu.innerHTML = `
+                <li class="nav-item">
+                    <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Carrito</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="logOutLink"> Log Out</a>
+                </li>
+                ` 
+                index.innerText=`${token.user_id}`   
+            }    
         } else {
-            // renderizo el navbar de invitado
+            menu.innerHTML = `
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="register.html">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.html">Login</a>
+                        </li>
+                `
+            index.innerText=``     
         }
         return data
     } catch (error) {
         console.log(error);
     }
 }
+
+verifyOnLine()

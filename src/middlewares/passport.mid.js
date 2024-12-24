@@ -3,12 +3,14 @@ import { Strategy as LocalStrategy } from "passport-local"
 import { Strategy as GoogleStrategy } from "passport-google-oauth2"
 import { Strategy as GitHubStrategy } from "passport-github2"
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { create, readByEmail, readById, readPaginate,update } from "../data/mongo/managers/users.manager.js"
+import { create, readByEmail, readById, readPaginate,update } from "../dao/mongo/managers/users.manager.js"
 import { createHashUtil, verifyHashUtil } from "../utils/hash.util.js"
 import { createTokenUtil,verifyTokenUtil,finishTokenUtil } from "../utils/token.util.js"
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BASE_URL } = process.env
-const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK } = process.env
-const { JWT_SECRET, SECRET_KEY } = process.env  
+import envUtil from "../utils/env.util.js";
+import { sendVeryfyEmail } from "../utils/nodemailer.util.js";
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK } = envUtil
+const { GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, GITHUB_CALLBACK } = envUtil
+const { JWT_SECRET, SECRET_KEY } = envUtil
 
 passport.use("register", new LocalStrategy(
     { passReqToCallback: true, usernameField: "email" },
@@ -24,7 +26,9 @@ passport.use("register", new LocalStrategy(
             req.body.password = createHashUtil(password)
             let data = req.body
             data.emailMkt = email
+            data.verifyCode= Math.floor(Math.random() * (9999 - 1000 + 1) + 1000)
             const user = await create(data)
+            await sendVeryfyEmail(email, data.verifyCode)
             return done(null, user)
         } catch (error) {
             return done(error)
@@ -42,6 +46,10 @@ passport.use("login", new LocalStrategy(
                     message: "USER NOT FOUND",
                     statusCode: 401}
                 return done(null, false, info)    
+            }
+            if (!user.verifyUser) {
+                const info= {message: "USER NOT VERIFIED, VERIFY YOUR ACCOUNT"}
+                return done(null, false, info)
             }
             const dbPassword = user.password
             const verify = verifyHashUtil(password, dbPassword)
@@ -118,7 +126,7 @@ passport.use("admin", new JwtStrategy(
     })
 )
 passport.use("google", new GoogleStrategy(
-    { clientID: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET, passReqToCallback: true, callbackURL: BASE_URL + "sessions/google/cb" },
+    { clientID: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET, passReqToCallback: true, callbackURL: GOOGLE_CALLBACK },
     async (req, accessToken, refreshToken, profile, done) => {
         try {
             // desestructuro de los datos de google el id del usuario y su foto/avatar
